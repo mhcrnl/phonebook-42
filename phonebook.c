@@ -115,6 +115,10 @@ int deleterecord(phonebook *p) {
 	return 0;
 }
 
+int isavailable(phonebook *p) {
+	return 0;
+}
+
 
 
 
