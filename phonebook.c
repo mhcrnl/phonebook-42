@@ -98,7 +98,8 @@ int listrecord(phonebook *p) {
 		count++;
 		printf("%d\n",count);
 		printf("Name:%s %s %s\nCity:%s\nMobile No:%0.0lf\nSex:%s\nE-mail:%s\n ", p->fname, p->mname, p->lname, p->address,
-		p->mobile_no, p->sex, p->mail, p->dob);                	        
+		p->mobile_no, p->sex, p->mail, p->dob);    
+	}
 	fclose(fp);
 	return 0;
 }
