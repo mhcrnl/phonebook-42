@@ -11,7 +11,7 @@ typedef struct phonebook {
 void menu(phonebook *p);
 void menuchoice(phonebook *p);
 int addrecord(phonebook *p);
-int listrecord(phonebook *p, int flag);
+int listrecord(phonebook *p);
 int modifyrecord(phonebook *p);
 int deleterecord(phonebook *p);
 int searchrecord(phonebook *p);
