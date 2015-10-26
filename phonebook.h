@@ -21,5 +21,5 @@ int backup(phonebook *p);
 void exitapp();
 void login();
 phonebook *isavailable(phonebook *p, double mobile_no);
-
+int groupassign(phonebook *p);
 
