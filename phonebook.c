@@ -87,20 +87,83 @@ int save(char *data) {
 }
 
 int listrecord(phonebook *p) {
-	int count = 0;
-	FILE *fp = fopen("record.txt", "r");
-	if(fp == NULL) {
-		perror("File opened failed:");
-		return errno;
+	int count = 0, choice;
+	printf("Which contacts do you wish to see?\n");
+	printf("\t1.Family  \t2.Friends  \t3.Collegue/Office Contacts  \n\t4.Emergency  \t5.All\n");
+	printf("Enter your choice of operation\n");
+	scanf("%d", &choice);
+	if(choice == 1) {
+		FILE *fp = fopen("family.txt", "r");
+		if(fp == NULL) {
+			perror("File opened failed:");
+			return errno;
+		}
+		printf("Your records are..\n");
+		while(fscanf(fp,"%s\n %s\n %s\n %s\n %s\n %s\n %lf\n %s", p->fname, p->mname, p->lname, p->address, p->sex, p->mail, 			&p->mobile_no, p->dob) != EOF) {
+			count++;
+			printf("%d\n",count);
+			printf("Name:%s %s %s\nAddress:%s\nSex:%s\nE-mail:%s\nMobile No:%0.0lf\nDate of Birth:%s\n", p->fname,        				p->mname, p->lname, p->address, p->sex, p->mail, p->mobile_no, p->dob);  
+		}              	        
+		fclose(fp);
 	}
-	printf("Your records are..\n");
-	while(fscanf(fp,"%s\n %s\n %s\n %s\n %s\n %s\n %lf\n %s", p->fname, p->mname, p->lname, p->address, p->sex, p->mail, &p->mobile_no,
-	p->dob) != EOF) {
-		count++;
-		printf("%d\n",count);
-		printf("Name:%s %s %s\nAddress:%s\nSex:%s\nE-mail:%s\nMobile No:%0.0lf\nDate of Birth:%s\n", p->fname, p->mname, p->lname,    			p->address, p->sex, p->mail, p->mobile_no, p->dob);  
-	}              	        
-	fclose(fp);
+	else if(choice == 2) {
+		FILE *fp = fopen("friends.txt", "r");
+		if(fp == NULL) {
+			perror("File opened failed:");
+			return errno;
+		}
+		printf("Your records are..\n");
+		while(fscanf(fp,"%s\n %s\n %s\n %s\n %s\n %s\n %lf\n %s", p->fname, p->mname, p->lname, p->address, p->sex, p->mail, 			&p->mobile_no, p->dob) != EOF) {
+			count++;
+			printf("%d\n",count);
+			printf("Name:%s %s %s\nAddress:%s\nSex:%s\nE-mail:%s\nMobile No:%0.0lf\nDate of Birth:%s\n", p->fname,        				p->mname, p->lname, p->address, p->sex, p->mail, p->mobile_no, p->dob);  
+		}              	        
+		fclose(fp);
+	}
+	else if(choice == 3) {
+		FILE *fp = fopen("office.txt", "r");
+		if(fp == NULL) {
+			perror("File opened failed:");
+			return errno;
+		}
+		printf("Your records are..\n");
+		while(fscanf(fp,"%s\n %s\n %s\n %s\n %s\n %s\n %lf\n %s", p->fname, p->mname, p->lname, p->address, p->sex, p->mail, 			&p->mobile_no, p->dob) != EOF) {
+			count++;
+			printf("%d\n",count);
+			printf("Name:%s %s %s\nAddress:%s\nSex:%s\nE-mail:%s\nMobile No:%0.0lf\nDate of Birth:%s\n", p->fname,        				p->mname, p->lname, p->address, p->sex, p->mail, p->mobile_no, p->dob);  
+		}              	        
+		fclose(fp);
+	}
+	else if(choice == 4) {
+		FILE *fp = fopen("emergency.txt", "r");
+		if(fp == NULL) {
+			perror("File opened failed:");
+			return errno;
+		}
+		printf("Your records are..\n");
+		while(fscanf(fp,"%s\n %s\n %s\n %s\n %s\n %s\n %lf\n %s", p->fname, p->mname, p->lname, p->address, p->sex, p->mail, 			&p->mobile_no, p->dob) != EOF) {
+			count++;
+			printf("%d\n",count);
+			printf("Name:%s %s %s\nAddress:%s\nSex:%s\nE-mail:%s\nMobile No:%0.0lf\nDate of Birth:%s\n", p->fname,        				p->mname, p->lname, p->address, p->sex, p->mail, p->mobile_no, p->dob);  
+		}              	        
+		fclose(fp);
+	}
+	else if(choice == 5) {
+		FILE *fp = fopen("record.txt", "r");
+		if(fp == NULL) {
+			perror("File opened failed:");
+			return errno;
+		}
+		printf("Your records are..\n");
+		while(fscanf(fp,"%s\n %s\n %s\n %s\n %s\n %s\n %lf\n %s", p->fname, p->mname, p->lname, p->address, p->sex, p->mail, 			&p->mobile_no, p->dob) != EOF) {
+			count++;
+			printf("%d\n",count);
+			printf("Name:%s %s %s\nAddress:%s\nSex:%s\nE-mail:%s\nMobile No:%0.0lf\nDate of Birth:%s\n", p->fname,        				p->mname, p->lname, p->address, p->sex, p->mail, p->mobile_no, p->dob);  
+		}              	        
+		fclose(fp);
+	}
+	else 
+		printf("Sorry! Wrong Choice.\n"); 	
 	return 0;
 }
 
@@ -416,6 +479,63 @@ phonebook *isavailable(phonebook *p, double mobile_no) {
 		else
 			return NULL;	
 	}
+}
+
+int groupassign(phonebook *p) {
+	int choice;
+	printf("Which group would you like to assign to this contact?\n");
+	printf("\t1.Family  \t2.Friends  \t3.Collegue/Office Contacts  \n\t4.Emergency  \t5.Create new group\n");
+	printf("Enter your choice of operation\n");
+	scanf("%d", &choice);
+	if (choice == 1) {
+		FILE *fp = fopen("family.txt", "a+");
+		if(fp == NULL) {
+			perror("File opened failed:");
+			return errno;
+		}
+		fprintf(fp,"%s %s %s %s %s %s %0.0lf %s", p->fname, p->mname, p->lname, p->address, p->sex, p->mail, p->mobile_no, p->dob);
+		fprintf(fp, "\n");
+		fclose(fp);			
+	}		
+	else if(choice == 2) {
+		FILE *fp = fopen("friends.txt", "a+");
+		if(fp == NULL) {
+			perror("File opened failed:");
+			return errno;
+		}
+		fprintf(fp,"%s %s %s %s %s %s %0.0lf %s", p->fname, p->mname, p->lname, p->address, p->sex, p->mail, 
+		p->mobile_no, p->dob);
+		fprintf(fp, "\n");
+		fclose(fp);	
+	}
+	else if(choice == 3) {
+		FILE *fp = fopen("office.txt", "a+");
+		if(fp == NULL) {
+			perror("File opened failed:");
+			return errno;
+		}
+		fprintf(fp,"%s %s %s %s %s %s %0.0lf %s", p->fname, p->mname, p->lname, p->address, p->sex, p->mail, 
+		p->mobile_no, p->dob);
+		fprintf(fp, "\n");
+		fclose(fp);	
+	}
+	else if(choice == 4) {
+		FILE *fp = fopen("emergency.txt", "a+");
+		if(fp == NULL) {
+			perror("File opened failed:");
+			return errno;
+		}
+		fprintf(fp,"%s %s %s %s %s %s %0.0lf %s", p->fname, p->mname, p->lname, p->address, p->sex, p->mail, 
+		p->mobile_no, p->dob);
+		fprintf(fp, "\n");
+		fclose(fp);	
+	}
+	else if(choice == 5) {
+	}
+	else
+		 printf("Sorry! Wrong Choice.\n"); 	
+	
+	return 0;
 }
 				
 
