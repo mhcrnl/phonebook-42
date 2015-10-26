@@ -1,3 +1,4 @@
+
 typedef struct phonebook {
 	char fname[35];
 	char mname[35];
@@ -9,22 +10,16 @@ typedef struct phonebook {
 	char dob[20];
 }phonebook;
 void menu(phonebook *p);
-void menuchoice(phonebook *p);
+void menuchoice();
 int addrecord(phonebook *p);
 int listrecord(phonebook *p);
 int modifyrecord(phonebook *p);
 int deleterecord(phonebook *p);
 int searchrecord(phonebook *p);
 int save(char *data);
-int backup(char *fname, char*lname, phonebook *p);
-void confirm(phonebook *p, int fun);
-void confirmlistcont(phonebook *p);
-void search(phonebook *p, char *str, char *column);
-void searchon(phonebook *p);
-void searchmenu(phonebook *p);
+int backup(phonebook *p);
 void exitapp();
 void login();
-void loading(int sec);
-void confirmaddrecord(phonebook *p);
-int isavailable(phonebook *p);
+phonebook *isavailable(phonebook *p, double mobile_no);
+
 
