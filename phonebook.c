@@ -1,42 +1,90 @@
 #include <stdio.h>
-#include <errno.h>
-#include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
+#include <fcntl.h>
+#include<time.h>
+#include<unistd.h>
+#include<ctype.h>
 #include "phonebook.h"
+
+#define CLEAR "clear"
+
 int main() {
-	struct phonebook p;
-	menu(&p);
+	menuchoice();
 	return 0;
 }
 void menu(phonebook *p) {
-	while(1) {
-		int choice;
-		printf("\n\n\t\t\t  MENU\t\t\n");
-		printf("\t1.Add New Record  \t2.List Records  \t3.Modify a Record  \n\t4.Search a Record  \t5.Delete a Record  \t6.Exit\n");
-		printf("Enter your choice of operation\n");
-		scanf("%d", &choice);
-		switch(choice) {
-			case 1: addrecord(p);
-				break;
-			case 2: listrecord(p);
-				break;
-			case 3: modifyrecord(p);
-				break;
-			case 4: searchrecord(p);
-				break;
-			case 5: deleterecord(p);
-				break;
-			case 6: 
-				printf("Application closed.\n");
-				exit(0);
-			default: printf("Sorry! Wrong Choice.\n"); 	
-				 break;
-		}
+	int choice;
+	printf("\n\n\t\t\t  MENU\t\t\n");
+	printf("\t1.Add New Record  \t2.List Records  \t3.Modify a Record  \n\t4.Search a Record  \t5.Delete a Record  \t6.Exit\n");
+	printf("Enter your choice of operation\n");
+	scanf("%d", &choice);
+	switch(choice) {
+		case 1: addrecord(p);
+			break;
+		case 2: listrecord(p);
+			break;
+		case 3: modifyrecord(p);
+			break;
+		case 4: searchrecord(p);
+			break;
+		case 5: deleterecord(p);
+			break;
+		case 6: 
+			printf("Application closed.\n");
+			exitapp();
+		default: printf("Sorry! Wrong Choice.\n"); 	
+			 break;
 	}
 }
 
+void menuchoice() {
+	struct phonebook p;
+	FILE *login;
+	char password[10], temp[10], *t, pwd[10], *tmp;
+	int n;
+	system(CLEAR);
+	login = fopen("password.txt", "rw+");
+	if(login == NULL) {		
+		printf("\nSign Up Please\n");
+		t = getpass("\nEnter Password :");
+		strcpy(password, t);
+		t = getpass("\nRe Enter Password :");
+		strcpy(temp, t);
+		memset(t, 0, strlen(t));
+		n = adminsignup(password, temp);
+		while(n == 1) {
+			system(CLEAR);
+			printf("\n Password did not match! \n");
+			t = getpass("\nEnter Password :");
+			strcpy(password, t);
+			t = getpass("\nRe Enter Password :");
+			strcpy(temp, t);
+			memset(t, 0, strlen(t));
+			n = adminsignup(password, temp);
+		}		
+	}
+	else {	
+		t_display();
+		printf("\n =========== LOG IN =======================\n");	
+		t = getpass("\n Enter Password : ");
+		strcpy(pwd, t);
+		memset(t, 0, strlen(t));
+		n = adminsignin(pwd);
+		while(n == 1) {
+			printf("\n Password did not match! \n");
+			t = getpass("\nEnter Password :");
+			strcpy(pwd, t);
+			memset(t, 0, strlen(t));
+			n = adminsignin(pwd);	
+		}		
+	}
+	menu(&p);
+}
+
 int addrecord(phonebook *p) {
+	char ch;
 	FILE *fp = fopen("record.txt", "a");
 	if(fp == NULL) {
 		perror("Database File opened failed:");
@@ -68,8 +116,15 @@ int addrecord(phonebook *p) {
         save(p->dob);
 	fprintf(fp, "\n");
 	backup(p);
+	groupassign(p);
 	fclose(fp);
 	printf("Record saved successfully.\n");
+	printf("Do you wish to continue? (Y/N)\n");
+	scanf("%c", &ch);
+	if(ch == 'Y' || ch == 'y')
+		returnfunc();
+	else
+		exitapp();
 	return 0;
 }
 
@@ -88,6 +143,7 @@ int save(char *data) {
 
 int listrecord(phonebook *p) {
 	int count = 0, choice;
+	char ch;
 	printf("Which contacts do you wish to see?\n");
 	printf("\t1.Family  \t2.Friends  \t3.Collegue/Office Contacts  \n\t4.Emergency  \t5.All\n");
 	printf("Enter your choice of operation\n");
@@ -163,7 +219,13 @@ int listrecord(phonebook *p) {
 		fclose(fp);
 	}
 	else 
-		printf("Sorry! Wrong Choice.\n"); 	
+		printf("Sorry! Wrong Choice.\n"); 
+	printf("Do you wish to continue? (Y/N)\n");
+	scanf("%c", &ch);
+	if(ch == 'Y' || ch == 'y')
+		returnfunc();
+	else
+		exitapp();	
 	return 0;
 }
 
@@ -267,7 +329,12 @@ int modifyrecord(phonebook *p) {
 		printf("-------------------\n");	
 	}	
 	fclose(fp);
-	
+	printf("Do you wish to continue? (Y/N)\n");
+	scanf("%c", &ch);
+	if(ch == 'Y' || ch == 'y')
+		returnfunc();
+	else
+		exitapp();
 	return 0;
 }
 
@@ -290,7 +357,7 @@ int backup(phonebook *p) {
 }	
 
 int searchrecord(phonebook *p) {
-	char fname[35], mname[35], lname[35], address[50], sex[8], mail[100], dob[20];
+	char fname[35], mname[35], lname[35], address[50], sex[8], mail[100], dob[20], ch;
 	double mobile_no;
 	int flag = 0, count = 0, choice;	
 	FILE *fp = fopen("record.txt", "r");
@@ -406,6 +473,8 @@ int searchrecord(phonebook *p) {
 			}
 			flag = 1;
 			break;
+		default: printf("Sorry! Wrong Choice.\n"); 	
+				 break;
 	}
 	if(flag != 1) {
 		printf("*******************\n");
@@ -413,6 +482,12 @@ int searchrecord(phonebook *p) {
 		printf("-------------------\n");	
 	}	      	        
 	fclose(fp);
+	printf("Do you wish to continue? (Y/N)\n");
+	scanf("%c", &ch);
+	if(ch == 'Y' || ch == 'y')
+		returnfunc();
+	else
+		exitapp();
 	return 0;
 }
 
@@ -462,7 +537,13 @@ int deleterecord(phonebook *p) {
 		printf("Data not found.\n");
 		printf("-------------------\n");	
 	}	
-	fclose(fp);	
+	fclose(fp);
+	printf("Do you wish to continue? (Y/N)\n");
+	scanf("%c", &ch);
+	if(ch == 'Y' || ch == 'y')
+		returnfunc();
+	else
+		exitapp();	
 	return 0;
 }
 
@@ -479,12 +560,14 @@ phonebook *isavailable(phonebook *p, double mobile_no) {
 		else
 			return NULL;	
 	}
+	fclose(fp);
 }
 
 int groupassign(phonebook *p) {
 	int choice;
+	char ch;
 	printf("Which group would you like to assign to this contact?\n");
-	printf("\t1.Family  \t2.Friends  \t3.Collegue/Office Contacts  \n\t4.Emergency  \t5.Create new group\n");
+	printf("\t1.Family  \t2.Friends  \t3.Collegue/Office Contacts  \n\t4.Emergency  \t5.No group for this contact!\n");
 	printf("Enter your choice of operation\n");
 	scanf("%d", &choice);
 	if (choice == 1) {
@@ -531,26 +614,69 @@ int groupassign(phonebook *p) {
 		fclose(fp);	
 	}
 	else if(choice == 5) {
+		printf("No group assigned to this contact\n");
 	}
 	else
 		 printf("Sorry! Wrong Choice.\n"); 	
-	
+	printf("Do you wish to continue? (Y/N)\n");
+	scanf("%c", &ch);
+	if(ch == 'Y' || ch == 'y')
+		returnfunc();
+	else
+		exitapp();
 	return 0;
 }
-				
 
+void exitapp() {
+	system(CLEAR);
+	t_display();
+	printf("Exiting in 1 second...........>\n");
+	sleep(1);	
+	exit(0);
+}
 
+void returnfunc() {
+	printf(" \n Press ENTER to return to Main Menu  ");
+	getchar();
+	a: 
+		if(getchar() == '\n') {
+			 struct phonebook p;
+			menu(&p);
+		}
+		else
+			goto a;
+}
 
+void t_display(void) {
+	time_t t;
+	time(&t);
+	printf("\nDate and time: %s\n", ctime(&t));
+}
 
+int adminsignup(char *password, char *temp) {
+	FILE *login;
+	login = fopen("password.txt", "w");
+	if(!strcmp(password, temp)) {
+		fwrite(password, 1, sizeof(password), login);
+		fclose(login);		
+		return 0;
+	}
+	else {	
+		return 1;
+	}
+}
 
-
-
-
-
-
-
-
-
-
-
-
+int adminsignin(char *password) {
+	FILE *login;
+	char tmp[10];
+	int cnt;
+	login = fopen("password.txt", "r");
+	cnt = fread(tmp, sizeof(char), 10, login);	
+	tmp[cnt] = '\0';
+	if(strcmp(password, tmp) == 0) {	
+		return 0;
+	}
+	else {	
+		return 1;
+	}
+}
