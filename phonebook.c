@@ -1,23 +1,56 @@
+
+/*****************************************************************************
+ * Copyright (C) Sneha.A.Shinde   shindesa14.comp@coep.ac.in
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
+ *****************************************************************************/
+
+/*PHONEBOOK*/
+
+/*This is a phonebook application which allows the user to store personal information in a very organised manner*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 #include <fcntl.h>
-#include<time.h>
-#include<unistd.h>
-#include<ctype.h>
 #include "phonebook.h"
 
 #define CLEAR "clear"
 
 int main() {
-	menuchoice();
+	struct phonebook p;
+	menu(&p);
 	return 0;
 }
+
+/*This function displays the MENU of the phonebook*/
+
 void menu(phonebook *p) {
-	int choice;
-	printf("\n\n\t\t\t  MENU\t\t\n");
-	printf("\t1.Add New Record  \t2.List Records  \t3.Modify a Record  \n\t4.Search a Record  \t5.Delete a Record  \t6.Exit\n");
+	system(CLEAR);
+	int choice, i;
+	for(i = 0; i < 80; i++)
+		printf("=");
+	printf("\n\n\t\t\t\t  MENU\t\t\n");
+	for(i = 0; i < 80; i++)
+		printf("=");
+	printf("\n");
+	printf("\t\t\t1.Add New Record  \n\t\t\t2.List Records  \n\t\t\t3.Modify a Record  \n\t\t\t4.Search a Record  \n\t\t\t5.Delete a Record  \n\t\t\t6.Exit\n");
+	for(i = 0; i < 80; i++)
+		printf("=");
+	printf("\n");
 	printf("Enter your choice of operation\n");
 	scanf("%d", &choice);
 	switch(choice) {
@@ -31,123 +64,90 @@ void menu(phonebook *p) {
 			break;
 		case 5: deleterecord(p);
 			break;
-		case 6: 
-			printf("Application closed.\n");
+		case 6: printf("Application closed.\n");
+			for(i = 0; i < 80; i++)
+				printf("-");
+				printf("\n");
 			exitapp();
 		default: printf("Sorry! Wrong Choice.\n"); 	
 			 break;
 	}
 }
 
-void menuchoice() {
-	struct phonebook p;
-	FILE *login;
-	char password[10], temp[10], *t, pwd[10], *tmp;
-	int n;
-	system(CLEAR);
-	login = fopen("password.txt", "rw+");
-	if(login == NULL) {		
-		printf("\nSign Up Please\n");
-		t = getpass("\nEnter Password :");
-		strcpy(password, t);
-		t = getpass("\nRe Enter Password :");
-		strcpy(temp, t);
-		memset(t, 0, strlen(t));
-		n = adminsignup(password, temp);
-		while(n == 1) {
-			system(CLEAR);
-			printf("\n Password did not match! \n");
-			t = getpass("\nEnter Password :");
-			strcpy(password, t);
-			t = getpass("\nRe Enter Password :");
-			strcpy(temp, t);
-			memset(t, 0, strlen(t));
-			n = adminsignup(password, temp);
-		}		
-	}
-	else {	
-		t_display();
-		printf("\n =========== LOG IN =======================\n");	
-		t = getpass("\n Enter Password : ");
-		strcpy(pwd, t);
-		memset(t, 0, strlen(t));
-		n = adminsignin(pwd);
-		while(n == 1) {
-			printf("\n Password did not match! \n");
-			t = getpass("\nEnter Password :");
-			strcpy(pwd, t);
-			memset(t, 0, strlen(t));
-			n = adminsignin(pwd);	
-		}		
-	}
-	menu(&p);
-}
+/*This function helps in adding a new record in the phonebook*/
 
 int addrecord(phonebook *p) {
-	char ch;
+	char ch[3];
+	int i;
 	FILE *fp = fopen("record.txt", "a");
 	if(fp == NULL) {
 		perror("Database File opened failed:");
 		return errno;
 	}
+	printf("Enter New Data for the record\n");
+	for(i = 0; i < 80; i++)
+		printf("=");
+	printf("\n");
+	/*As soon as the input of a new record is taken from the user, it is written on the file*/ 
 	printf("Enter first name: ");
 	scanf("%s", p->fname);
-        save(p->fname);
+        fprintf(fp, "%s ", p->fname);
         printf("Enter middle name: ");
         scanf("%s", p->mname);
-        save(p->mname);
+        fprintf(fp, "%s ", p->mname);
         printf("Enter last name: ");
 	scanf("%s", p->lname);
-        save(p->lname);
+        fprintf(fp, "%s ", p->lname);
         printf("Enter Address:");
 	scanf("%s",p->address);
-	save(p->address);
+	fprintf(fp, "%s ", p->address);
         printf("Enter sex:");
 	scanf("%s", p->sex);
-        save(p->sex);
+        fprintf(fp, "%s ", p->sex);
         printf("Enter e-mail:");
 	scanf("%s", p->mail);
-        save(p->mail);
+        fprintf(fp, "%s ", p->mail);
 	printf("Enter mobile no: ");
 	scanf("%lf", &p->mobile_no); 
-	fprintf(fp, "%0.0lf\t", p->mobile_no);
+	fprintf(fp, "%lf\t", p->mobile_no);
 	printf("Enter Date of Birth:");
 	scanf("%s", p->dob);
-        save(p->dob);
+        fprintf(fp, "%s ", p->dob);
 	fprintf(fp, "\n");
-	backup(p);
+	system(CLEAR);
 	groupassign(p);
 	fclose(fp);
-	printf("Record saved successfully.\n");
+	system(CLEAR);
+	for(i = 0; i < 80; i++)
+			printf("*");
+	printf("\n\t\t\t\tRecord saved successfully.\t\t\n");
+	for(i = 0; i < 80; i++)
+			printf("*");
+	printf("\n");
 	printf("Do you wish to continue? (Y/N)\n");
-	scanf("%c", &ch);
-	if(ch == 'Y' || ch == 'y')
+	scanf("%s", ch);
+	if(strcmp(ch, "y") == 0 || strcmp(ch, "Y") == 0)
 		returnfunc();
 	else
 		exitapp();
 	return 0;
 }
 
-int save(char *data) {
-	FILE *fp = fopen("record.txt", "a");
-	if(fp == NULL) {
-		perror("Database File opened failed:");
-		return errno;
-	}
-	else {
-		fprintf(fp, "%s ", data);
-		fclose(fp); 
-	}
-	return 0;	
-}
+/*This function lists all the records in the phonebook according to various categories*/
 
 int listrecord(phonebook *p) {
-	int count = 0, choice;
-	char ch;
+	int count = 0, choice, i;
+	char ch[3];
 	printf("Which contacts do you wish to see?\n");
-	printf("\t1.Family  \t2.Friends  \t3.Collegue/Office Contacts  \n\t4.Emergency  \t5.All\n");
+	for(i = 0; i < 80; i++)
+			printf("-");
+	printf("\n1.Family  \n2.Friends  \n3.Collegue/Office Contacts  \n4.Emergency  \n5.All\n");
+	for(i = 0; i < 80; i++)
+			printf("-");
+	printf("\n");
 	printf("Enter your choice of operation\n");
 	scanf("%d", &choice);
+	system(CLEAR);
 	if(choice == 1) {
 		FILE *fp = fopen("family.txt", "r");
 		if(fp == NULL) {
@@ -221,152 +221,152 @@ int listrecord(phonebook *p) {
 	else 
 		printf("Sorry! Wrong Choice.\n"); 
 	printf("Do you wish to continue? (Y/N)\n");
-	scanf("%c", &ch);
-	if(ch == 'Y' || ch == 'y')
-		returnfunc();
+	scanf("%s", ch);
+	if(strcmp(ch, "y") == 0 || strcmp(ch, "Y") == 0)
+		returnfunc();	
 	else
-		exitapp();	
+		exitapp();
 	return 0;
 }
 
+/*This function modifies a particular record stored in the phonebook*/
+
 int modifyrecord(phonebook *p) {
-	double mobile_no;
-	int flag = 0, choice;
-	phonebook *x, *q;
-	char ch;
+	int flag = 0, choice, x = 0, i;
+	char fname[30], lname[30], ch[3];
 	FILE *fp = fopen("record.txt", "a+");
-	FILE *fpb = fopen("backup.txt", "a+");
 	if(fp == NULL) {
 		perror("File opened failed:");
 		return errno;
 	}
-	if(fpb == NULL) {
-		perror("File opened failed:");
-		return errno;
+	printf("Enter first name and last name of the contact whose data you need to modify:\n");
+	scanf(" %s%s", fname, lname);
+	while(fscanf(fp,"%s\n %s\n %s\n %s\n %s\n %s\n %lf\n %s", p->fname, p->mname, p->lname, p->address, p->sex, p->mail, 
+	&p->mobile_no, p->dob) != EOF) {
+		if(strcmp(p->fname, fname) == 0 && strcmp(p->lname, lname) == 0)
+			x = 1;
 	}
-	printf("Enter orignal/initial mobile no. of the contact whose data you need to modify:\n");
-	scanf(" %lf", &mobile_no);
-	x = isavailable(p, mobile_no);
-	if(x != NULL) {
+	if(x == 1) {
 		printf("Data found..\n");
-		printf("%s\n %s\n %s\n %s\n %s\n %s\n %0.0lf\n %s\n", x->fname, x->mname, x->lname, x->address, x->sex, x->mail, 			x->mobile_no, x->dob);
+		printf("%s\n %s\n %s\n %s\n %s\n %s\n %0.0lf\n %s\n", p->fname, p->mname, p->lname, p->address, p->sex, p->mail, 			p->mobile_no, p->dob);
 		printf("Enter New Data to modify the record\n");
-		printf("----------------------------------------\n");
+		for(i = 0; i < 80; i++)
+			printf("=");
+		printf("\n");
 		printf("Which field do you wish to modify for the specified contact?\n"); 
+		for(i = 0; i < 80; i++)
+			printf("-");
+		printf("\n");
 		printf("1.First Name\n2.Middle Name\n3.Last Name\n4.Mobile No.\n5.Address\n6.Sex\n7.E-mail\n8.DOB\n");
+		for(i = 0; i < 80; i++)
+			printf("-");
+		printf("\n");
+		printf("Enter your choice of operation:\n");
 		scanf("%d", &choice);
 		switch(choice) {
 			case 1:			
 				printf("Enter first name: ");
-				scanf("%s", x->fname);
+				scanf("%s", p->fname);
 				break;
 			case 2:			
 				printf("Enter middle name: ");
-				scanf("%s", x->mname);
+				scanf("%s", p->mname);
 				break;
 			case 3:			
 				printf("Enter last name: ");
-				scanf("%s", x->lname);
+				scanf("%s", p->lname);
 				break;
 			case 4:			
 				printf("Enter mobile no: ");
-				scanf("%lf", &x->mobile_no);
+				scanf("%lf", &p->mobile_no);
 				break;
 			case 5:
 				printf("Enter Address:");
-				scanf("%s",x->address);
+				scanf("%s",p->address);
 				break;
 			case 6:			
 				printf("Enter sex:");
-				scanf("%s", x->sex);
+				scanf("%s", p->sex);
 				break;
 			case 7:
 				printf("Enter e-mail:");
-				scanf("%s", x->mail);
+				scanf("%s", p->mail);
 				break;
 			case 8:
 				printf("Enter date of birth:");
-				scanf("%s", x->dob);
+				scanf("%s", p->dob);
 				break;
 		}
 		printf("CONFIRMATION!\n");
 		printf("Do you wish to modify this record?(Y/N)\n");
-		scanf("%c", &ch);
-		if(ch == 'y' || 'Y') {
-			strcpy(q->fname, x->fname);
-			strcpy(q->mname, x->mname);
-			strcpy(q->lname, x->lname);
-			strcpy(q->address, x->address);
-			strcpy(q->sex, x->sex);
-			strcpy(q->mail, x->mail);
-			strcpy(q->dob, x->dob);
-			q->mobile_no = x->mobile_no;
+		scanf("%s", ch);
+		if(strcmp(ch, "y") == 0 || strcmp(ch, "Y") == 0) {
 			fprintf(fp, "\n");
-              		fprintf(fp,"%s %s %s %s %s %s %0.0lf %s", q->fname, q->mname, q->lname, q->address, q->sex, q->mail, 
-			q->mobile_no, q->dob);
-			x->fname[0] = x->lname[0] = x->mname[0] = x->address[0] = x->sex[0] = x->mail[0] = x->dob[0] = '\0';
-			x->mobile_no = -1;
-			fclose(fpb);
+              		fprintf(fp,"%s %s %s %s %s %s %0.0lf %s", p->fname, p->mname, p->lname, p->address, p->sex, p->mail, 
+			p->mobile_no, p->dob);
+			fprintf(fp, "\n");
 			flag = 1;
 			if(flag == 1) {
-				backup(q);
-				printf("*******************************\n");
+				for(i = 0; i < 80; i++)
+					printf("*");
+				printf("\n");
 				printf("Record Updated Successfully.\n");
-				printf("-------------------------------\n");
+				for(i = 0; i < 80; i++)
+					printf("*");
+				printf("\n");
 			}
 			else {
-				printf("*******************\n");
+				for(i = 0; i < 80; i++)
+					printf("-");
+				printf("\n");
 				printf("Data not found.\n");
-				printf("-------------------\n");
+				for(i = 0; i < 80; i++)
+					printf("-");
+				printf("\n");	
 			}
 		}
 		else
-			return;
+			returnfunc();
 	}
 	else {
-		printf("*******************\n");
+		for(i = 0; i < 80; i++)
+			printf("-");
+		printf("\n");
 		printf("Data not found.\n");
-		printf("-------------------\n");	
+		for(i = 0; i < 80; i++)
+			printf("-");
+		printf("\n");	
 	}	
 	fclose(fp);
 	printf("Do you wish to continue? (Y/N)\n");
-	scanf("%c", &ch);
-	if(ch == 'Y' || ch == 'y')
+	scanf("%s", ch);
+	if(strcmp(ch, "y") == 0 || strcmp(ch, "Y") == 0)
 		returnfunc();
 	else
 		exitapp();
 	return 0;
 }
 
-int backup(phonebook *p) {
-	FILE *fp1 = fopen("record.txt", "r");
-	FILE *fp2 = fopen("backup.txt", "a+");
-	if(fp1 == NULL || fp2 == NULL) {
-		perror("File opened failed:");
-		return errno;
-	}
-	while(fscanf(fp1,"%s\n %s\n %s\n %s\n %s\n %s\n %lf\n %s", p->fname, p->mname, p->lname, p->address, p->sex, p->mail, 
-	&p->mobile_no, p->dob) != EOF) {
-		fprintf(fp2,"%s %s %s %s %s %s %0.0lf %s", p->fname, p->mname, p->lname, p->address, p->sex, p->mail, 
-		p->mobile_no, p->dob);
-		fprintf(fp2, "\n");
-	}
-	fclose(fp1);
-	fclose(fp2);
-	return 0;
-}	
+/*This function searches and displays a particular record stored in the phonebook according to the user's needs*/	
 
 int searchrecord(phonebook *p) {
-	char fname[35], mname[35], lname[35], address[50], sex[8], mail[100], dob[20], ch;
+	char fname[35], mname[35], lname[35], address[50], sex[8], mail[100], dob[20], ch[3];
 	double mobile_no;
-	int flag = 0, count = 0, choice;	
+	int flag = 0, count = 0, choice, i;	
 	FILE *fp = fopen("record.txt", "r");
 	if(fp == NULL) {
 		perror("File opened failed:");
 		return errno;
 	}
 	printf("Enter the field you wish search the contact on?\n"); 
+	for(i = 0; i < 80; i++)
+		printf("-");
+	printf("\n");
 	printf("1.First Name\n2.Middle Name\n3.Last Name\n4.Mobile No.\n5.Address\n6.Sex\n7.E-mail\n8.DOB\n");
+	for(i = 0; i < 80; i++)
+		printf("-");
+	printf("\n");
+	printf("Enter your choice of operation:\n");
 	scanf("%d", &choice);
 	switch(choice) {
 		case 1:			
@@ -477,97 +477,103 @@ int searchrecord(phonebook *p) {
 				 break;
 	}
 	if(flag != 1) {
-		printf("*******************\n");
+		for(i = 0; i < 80; i++)
+			printf("-");
+		printf("\n");
 		printf("Record not found.\n");
-		printf("-------------------\n");	
+		for(i = 0; i < 80; i++)
+			printf("-");
+		printf("\n");	
 	}	      	        
 	fclose(fp);
 	printf("Do you wish to continue? (Y/N)\n");
-	scanf("%c", &ch);
-	if(ch == 'Y' || ch == 'y')
+	scanf("%s", ch);
+	if(strcmp(ch, "y") == 0 || strcmp(ch, "Y") == 0)
 		returnfunc();
 	else
 		exitapp();
 	return 0;
 }
 
+/*This function deletes a particular record stored in the phonebook*/
+
 int deleterecord(phonebook *p) {
-	int flag = 0;	
-	double mobile_no;
-	phonebook *x;
-	char ch;
+	int flag = 0, x = 0, i;
+	char fname[30], lname[30], ch[3];
 	FILE *fp = fopen("record.txt", "a+");
-	FILE *fpb = fopen("backup.txt", "a+");
 	if(fp == NULL) {
 		perror("File opened failed:");
 		return errno;
 	}
-	if(fpb == NULL) {
-		perror("File opened failed:");
-		return errno;
+	printf("Enter first name and last name of the contact whose data you need to delete:\n");
+	scanf(" %s%s", fname, lname);
+	while(fscanf(fp,"%s\n %s\n %s\n %s\n %s\n %s\n %lf\n %s", p->fname, p->mname, p->lname, p->address, p->sex, p->mail, 
+	&p->mobile_no, p->dob) != EOF) {
+		if(strcmp(p->fname, fname) == 0 && strcmp(p->lname, lname) == 0)
+			x = 1;
 	}
-	printf("Enter mobile no. of the contact whose data you need to delete:\n");
-	scanf(" %lf", &mobile_no);
-	x = isavailable(p, mobile_no);
-	if(x != NULL) {
+	if(x == 1) {
 		printf("Data found..\n");
-		printf("%s\n %s\n %s\n %s\n %s\n %s\n %0.0lf\n %s\n", x->fname, x->mname, x->lname, x->address, x->sex, x->mail, 			x->mobile_no, x->dob);
+		printf("%s\n %s\n %s\n %s\n %s\n %s\n %0.0lf\n %s\n", p->fname, p->mname, p->lname, p->address, p->sex, p->mail, 			p->mobile_no, p->dob);
 		printf("CONFIRMATION!\n");
 		printf("Do you wish to delete this record?(Y/N)\n");
-		scanf("%c", &ch);
-		if(ch == 'y' || 'Y'){
-			x->fname[0] = x->lname[0] = x->mname[0] = x->address[0] = x->sex[0] = x->mail[0] = x->dob[0] = '\0';
-			x->mobile_no = -1;
+		scanf("%s", ch);
+		if(strcmp(ch, "y") == 0 || strcmp(ch, "Y") == 0) {
+			p->fname[0] = p->lname[0] = p->mname[0] = p->address[0] = p->sex[0] = p->mail[0] = p->dob[0] = '\0';
+			p->mobile_no = -1;
 			flag = 1;
 		}
 		if(flag == 1) {
-			backup(p);
-			printf("*******************************\n");
+			for(i = 0; i < 80; i++)
+				printf("*");
+			printf("\n");
 			printf("Record Deleted Successfully\n");
-			printf("-------------------------------\n");
+			for(i = 0; i < 80; i++)
+				printf("*");
+			printf("\n");
 		}
 		else {
-			printf("-------------------------------\n");			
+			for(i = 0; i < 80; i++)
+				printf("*");
+			printf("\n");			
 			printf("Operation Cancelled\n");
-			printf("-------------------------------\n");
+			for(i = 0; i < 80; i++)
+				printf("-");
+			printf("\n");
 		}		
 	}
 	else {
-		printf("*******************\n");
+		for(i = 0; i < 80; i++)
+			printf("-");
+		printf("\n");
 		printf("Data not found.\n");
-		printf("-------------------\n");	
+		for(i = 0; i < 80; i++)
+			printf("-");
+		printf("\n");	
 	}	
 	fclose(fp);
 	printf("Do you wish to continue? (Y/N)\n");
-	scanf("%c", &ch);
-	if(ch == 'Y' || ch == 'y')
+	scanf("%s", ch);
+	if(strcmp(ch, "y") == 0 || strcmp(ch, "Y") == 0)
 		returnfunc();
 	else
 		exitapp();	
 	return 0;
 }
 
-phonebook *isavailable(phonebook *p, double mobile_no) {
-	FILE *fp = fopen("record.txt", "r");
-	if(fp == NULL) {
-		perror("File opened failed:");
-		return NULL;
-	}
-	while(fscanf(fp,"%s\n %s\n %s\n %s\n %s\n %s\n %lf\n %s", p->fname, p->mname, p->lname, p->address, p->sex, p->mail, 
-	&p->mobile_no, p->dob) != EOF) {
-		if(mobile_no == p->mobile_no)
-			return p;
-		else
-			return NULL;	
-	}
-	fclose(fp);
-}
+/*This function helps in assigning a specified group to a particular record*/
 
 int groupassign(phonebook *p) {
-	int choice;
-	char ch;
+	int choice, i;
+	char ch[3];
 	printf("Which group would you like to assign to this contact?\n");
+	for(i = 0; i < 80; i++)
+		printf("-");
+	printf("\n");
 	printf("\t1.Family  \t2.Friends  \t3.Collegue/Office Contacts  \n\t4.Emergency  \t5.No group for this contact!\n");
+	for(i = 0; i < 80; i++)
+		printf("-");
+	printf("\n");
 	printf("Enter your choice of operation\n");
 	scanf("%d", &choice);
 	if (choice == 1) {
@@ -619,64 +625,26 @@ int groupassign(phonebook *p) {
 	else
 		 printf("Sorry! Wrong Choice.\n"); 	
 	printf("Do you wish to continue? (Y/N)\n");
-	scanf("%c", &ch);
-	if(ch == 'Y' || ch == 'y')
+	scanf("%s", ch);
+	if(strcmp(ch, "y") == 0 || strcmp(ch, "Y") == 0)
 		returnfunc();
 	else
 		exitapp();
 	return 0;
 }
 
+/*This function is responsible for exiting from the application*/
+
 void exitapp() {
 	system(CLEAR);
-	t_display();
-	printf("Exiting in 1 second...........>\n");
-	sleep(1);	
 	exit(0);
 }
 
+/*This function helps in returning to the MAIN MENU after completing a particular task*/
+
 void returnfunc() {
-	printf(" \n Press ENTER to return to Main Menu  ");
-	getchar();
-	a: 
-		if(getchar() == '\n') {
-			 struct phonebook p;
-			menu(&p);
-		}
-		else
-			goto a;
+	system(CLEAR);
+	struct phonebook p;
+	menu(&p);
 }
 
-void t_display(void) {
-	time_t t;
-	time(&t);
-	printf("\nDate and time: %s\n", ctime(&t));
-}
-
-int adminsignup(char *password, char *temp) {
-	FILE *login;
-	login = fopen("password.txt", "w");
-	if(!strcmp(password, temp)) {
-		fwrite(password, 1, sizeof(password), login);
-		fclose(login);		
-		return 0;
-	}
-	else {	
-		return 1;
-	}
-}
-
-int adminsignin(char *password) {
-	FILE *login;
-	char tmp[10];
-	int cnt;
-	login = fopen("password.txt", "r");
-	cnt = fread(tmp, sizeof(char), 10, login);	
-	tmp[cnt] = '\0';
-	if(strcmp(password, tmp) == 0) {	
-		return 0;
-	}
-	else {	
-		return 1;
-	}
-}

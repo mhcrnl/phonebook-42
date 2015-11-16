@@ -1,27 +1,44 @@
-typedef struct phonebook {
+
+/*****************************************************************************
+ * Copyright (C) Sneha.A.Shinde   shindesa14.comp@coep.ac.in
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
+ *****************************************************************************/
+
+/*Data Structure*/
+
+typedef struct phonebook {	
 	char fname[35];
 	char mname[35];
 	char lname[35];
-	double mobile_no;
 	char address[50];
 	char sex[8];
 	char mail[100];
+	double mobile_no;
 	char dob[20];
 }phonebook;
+
+/*Program Functions*/
+
 void menu(phonebook *p);
-void menuchoice();
 int addrecord(phonebook *p);
 int listrecord(phonebook *p);
 int modifyrecord(phonebook *p);
 int deleterecord(phonebook *p);
 int searchrecord(phonebook *p);
-int save(char *data);
-int backup(phonebook *p);
-int adminsignup(char *password, char *temp);
-int adminsignin(char *password);
+int groupassign(phonebook *p);
 void exitapp();
 void returnfunc();
-void t_display();
-phonebook *isavailable(phonebook *p, double mobile_no);
-int groupassign(phonebook *p);
 
